@@ -36,51 +36,41 @@ from util import print_error, InvalidPassword
 import ecdsa
 import pyaes
 
+# Bitcoin Cash fork block specification
+BITCOIN_CASH_FORK_BLOCK_HEIGHT = 478559
+BITCOIN_CASH_FORK_BLOCK_HASH = "000000000000000000651ef99cb9fcbe0dadde1d424bd9f15ff20136191a5eec"
+
 # Bitcoin network constants
 TESTNET = False
-NOLNET = False
 ADDRTYPE_P2PKH = 0
 ADDRTYPE_P2SH = 5
 ADDRTYPE_P2WPKH = 6
 XPRV_HEADER = 0x0488ade4
 XPUB_HEADER = 0x0488b21e
-HEADERS_URL = "https://headers.electrum.org/blockchain_headers"
+HEADERS_URL = "http://bitcoincash.com/files/blockchain_headers"
 GENESIS = "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"
 
 def set_testnet():
     global ADDRTYPE_P2PKH, ADDRTYPE_P2SH, ADDRTYPE_P2WPKH
     global XPRV_HEADER, XPUB_HEADER
     global TESTNET, HEADERS_URL
-    global GENESIS
+    global GENESIS, BITCOIN_CASH_FORK_BLOCK_HEIGHT, BITCOIN_CASH_FORK_BLOCK_HASH
     TESTNET = True
     ADDRTYPE_P2PKH = 111
     ADDRTYPE_P2SH = 196
     ADDRTYPE_P2WPKH = 3
     XPRV_HEADER = 0x04358394
     XPUB_HEADER = 0x043587cf
-    HEADERS_URL = "https://headers.electrum.org/testnet_headers"
+    HEADERS_URL = ""
     GENESIS = "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"
-
-def set_nolnet():
-    global ADDRTYPE_P2PKH, ADDRTYPE_P2SH, ADDRTYPE_P2WPKH
-    global XPRV_HEADER, XPUB_HEADER
-    global NOLNET, HEADERS_URL
-    global GENESIS
-    TESTNET = True
-    ADDRTYPE_P2PKH = 0
-    ADDRTYPE_P2SH = 5
-    ADDRTYPE_P2WPKH = 6
-    XPRV_HEADER = 0x0488ade4
-    XPUB_HEADER = 0x0488b21e
-    HEADERS_URL = "https://headers.electrum.org/nolnet_headers"
-    GENESIS = "663c88be18d07c45f87f910b93a1a71ed9ef1946cad50eb6a6f3af4c424625c6"
-
+    BITCOIN_CASH_FORK_BLOCK_HEIGHT = 1155876
+    BITCOIN_CASH_FORK_BLOCK_HASH = "00000000000e38fef93ed9582a7df43815d5c2ba9fd37ef70c9a0ea4a285b8f5"
 
 
 ################################## transactions
 
 FEE_STEP = 10000
-MAX_FEE_RATE = 300000
+MAX_FEE_RATE = 100000
 FEE_TARGETS = [25, 10, 5, 2]
 
 COINBASE_MATURITY = 100
@@ -232,8 +222,6 @@ def seed_type(x):
         return 'standard'
     elif TESTNET and is_new_seed(x, version.SEED_PREFIX_SW):
         return 'segwit'
-    elif is_new_seed(x, version.SEED_PREFIX_2FA):
-        return '2fa'
     return ''
 
 is_seed = lambda x: bool(seed_type(x))
